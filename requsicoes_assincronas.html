@@ -14,21 +14,48 @@
 
 
 			function requisitarPagina(url){
+
+				document.getElementById('conteudo').innerHTML = ''
+
+				// gif de loading
+				if(!document.getElementById('loading')){
+					let imgLoading = document.createElement('img')
+					imgLoading.id = 'loading'
+					imgLoading.src = 'loading.gif'
+					imgLoading.className = 'rounded mx-auto d-block'
+	
+					document.getElementById('conteudo').appendChild(imgLoading)
+				}
+
 				// state = 0 (Requisição não iniciada)
 				let ajax = new XMLHttpRequest();
 				console.log(ajax.readyState)
 				
-				// state = 1 (Requisição estabelecidad com o servidor)
+				// state = 1 (Requisição estabelecida com o servidor)
 				ajax.open('GET', url)
 				console.log(ajax.readyState)
 
+				// verificar todas as mudanças de estado restantes (2 -> 4)
 				ajax.onreadystatechange = () => {
+					// state = 2 (Requisição recebida pelo servidor)
+					// state = 3 (Requisição esendo processada pelo servidor)
+					// state = 4 (Requisição finalizada)
 					console.log(ajax.readyState)
+
+					if(ajax.readyState == 4 && ajax.status == 200){
+						document.getElementById('loading').remove()
+						document.getElementById('conteudo').innerHTML = ajax.responseText
+					}
+
+					if(ajax.readyState == 4 && ajax.status == 404){
+						document.getElementById('loading').remove()
+						document.getElementById('conteudo').innerHTML = 'requisição com erro. status 404'
+					}
 				}
 
 
-				// ajax.send()
-				// console.log(ajax)
+				ajax.send()
+				console.log(ajax)
 
 			}
         </script>
@@ -51,7 +78,7 @@
 	    	<div class="row mb-2">
 	    		<div class="col-md-4 center"></div>
 	    		<div class="col-md-4 center">
-	    			<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_1_conteudo.html')">Página 1</a>
+	    			<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_1_conteudo.php')">Página 1</a>
 	    			<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_2_conteudo.html')">Página 2</a>
 	    			<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_3_conteudo.html')">Página 3</a>
 	    		</div>
@@ -61,7 +88,7 @@
 	    	<div class="row">
 		    	<div class="col-md-1"></div>
 
-		    	<div class="col-md-10">
+		    	<div class="col-md-10" id="conteudo">
 		    		
 		    	</div>
 		    		
